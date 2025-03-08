@@ -8,6 +8,8 @@ const newQuoteBtn = document.getElementById("new-quote");
 const loader = document.getElementById("loader");
 
 let apiQuotes = [];
+let customQuotes = [];
+let allQuotes = [];
 let currentQuote = {};
 // Animation classes
 const animationClasses = [
@@ -63,18 +65,39 @@ function complete() {
   applyRandomAnimation();
 }
 
+// Get custom quotes from localStorage
+function getCustomQuotes() {
+  const quotes = localStorage.getItem('customQuotes');
+  return quotes ? JSON.parse(quotes) : [];
+}
+
 // Get Quotes From API
 async function getQuotes() {
   loading();
+  // Get custom quotes first
+  customQuotes = getCustomQuotes();
+  
+  // Get API quotes
   const apiURL = "https://jacintodesign.github.io/quotes-api/data/quotes.json";
   try {
     const response = await fetch(apiURL);
     apiQuotes = await response.json();
+    
+    // Combine API quotes and custom quotes
+    allQuotes = [...apiQuotes, ...customQuotes];
+    
     newQuote();
   } catch (error) {
     console.log('Error fetching quotes', error);
-    // Retry after 3 seconds
-    setTimeout(getQuotes, 3000);
+    
+    // If API fails, use just custom quotes if available
+    if (customQuotes.length > 0) {
+      allQuotes = customQuotes;
+      newQuote();
+    } else {
+      // Retry after 3 seconds
+      setTimeout(getQuotes, 3000);
+    }
   }
 }
 
@@ -102,14 +125,23 @@ function updateFavoriteButton() {
 // Show New Quote
 function newQuote() {
   loading();
-  // pick a random quote from apiQuotes array
-  const quote = apiQuotes[Math.floor(Math.random() * apiQuotes.length)];
-  //Check if Author field is blank and replace it with 'Unknown'
+  
+  // Check if we have quotes to display
+  if (allQuotes.length === 0) {
+    getQuotes();
+    return;
+  }
+  
+  // Pick a random quote from allQuotes array
+  const quote = allQuotes[Math.floor(Math.random() * allQuotes.length)];
+  
+  // Check if Author field is blank and replace it with 'Unknown'
   if (!quote.author) {
     authorText.textContent = "Unknown";
   } else {
     authorText.textContent = quote.author;
   }
+  
   // Check Quote length to determine the styling
   if (quote.text.length > 120) {
     quoteText.classList.add("long-quote");
@@ -120,7 +152,8 @@ function newQuote() {
   // Store current quote for favorites
   currentQuote = {
     text: quote.text,
-    author: quote.author || "Unknown"
+    author: quote.author || "Unknown",
+    isCustom: quote.isCustom || false
   };
   
   quoteText.textContent = quote.text;
@@ -161,6 +194,7 @@ function toggleFavorite() {
     favorites.push({
       text: currentQuote.text,
       author: currentQuote.author,
+      isCustom: currentQuote.isCustom,
       timestamp: new Date().getTime()
     });
     saveFavorites(favorites);

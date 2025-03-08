@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add Your Quote</title>
+    <!-- Favicon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="favicon_io/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon_io/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon_io/favicon-16x16.png" />
+    <link rel="manifest" href="favicon_io/site.webmanifest" />
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+
+<!-- Navigation -->
+    <div class="nav-container">
+      <a href="index.html" class="nav-button back-button">Back to Quotes</a>
+    </div>
+    <div class="nav-container left-nav">
+      <a href="favorites.html" class="nav-button">My Favorites</a>
+    </div>
+
+<!-- Add Quote Header -->
+    <h1 class="add-quote-header">Add Your Own Quote</h1>
+
+<!-- Add Quote Form Container -->
+    <div class="add-quote-container" id="add-quote-container">
+      <form id="quote-form">
+        <div class="form-group">
+          <label for="quote-text">Quote</label>
+          <textarea 
+            id="quote-text" 
+            placeholder="Enter your quote here..." 
+            required></textarea>
+        </div>
+        
+        <div class="form-group">
+          <label for="quote-author">Author</label>
+          <input 
+            type="text" 
+            id="quote-author" 
+            placeholder="Enter the author's name (leave blank for 'Unknown')" />
+        </div>
+        
+        <div class="form-buttons">
+          <button type="button" id="preview-quote" class="preview-button">
+            <i class="fas fa-eye"></i> Preview
+          </button>
+          <button type="submit" id="add-quote">
+            <i class="fas fa-plus"></i> Add Quote
+          </button>
+        </div>
+      </form>
+    </div>
+
+<!-- Quote Preview Container -->
+    <div class="quote-preview-container" id="quote-preview-container">
+      <h2>Quote Preview</h2>
+      <div class="quote-container preview-quote">
+        <div class="quote-text">
+          <i class="fas fa-quote-left"></i>
+          <span id="preview-quote-text"></span>
+        </div>
+        <div class="quote-author">
+          <span id="preview-quote-author"></span>
+        </div>
+      </div>
+      <button type="button" id="close-preview" class="close-preview-button">
+        <i class="fas fa-times"></i> Close Preview
+      </button>
+    </div>
+
+<!-- Success Message -->
+    <div class="success-message" id="success-message">
+      <i class="fas fa-check-circle"></i>
+      <p>Your quote has been added successfully!</p>
+      <button type="button" id="close-success" class="close-success-button">OK</button>
+    </div>
+
+<!-- Script -->
+    <script src="addquote.js"></script>
+  </body>
+</html> 
