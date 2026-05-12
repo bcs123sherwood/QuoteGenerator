@@ -17,13 +17,25 @@ const successMessage = document.getElementById('success-message');
 
 // Get custom quotes from localStorage
 function getCustomQuotes() {
-  const customQuotes = localStorage.getItem('customQuotes');
-  return customQuotes ? JSON.parse(customQuotes) : [];
+  try {
+    const customQuotes = localStorage.getItem('customQuotes');
+    return customQuotes ? JSON.parse(customQuotes) : [];
+  } catch (error) {
+    console.error('Error reading custom quotes from localStorage:', error);
+    return [];
+  }
 }
 
 // Save custom quotes to localStorage
 function saveCustomQuotes(quotes) {
-  localStorage.setItem('customQuotes', JSON.stringify(quotes));
+  try {
+    localStorage.setItem('customQuotes', JSON.stringify(quotes));
+  } catch (error) {
+    console.error('Error saving custom quotes to localStorage:', error);
+    if (error.name === 'QuotaExceededError') {
+      alert('Storage quota exceeded. Cannot add more quotes.');
+    }
+  }
 }
 
 // Show quote preview

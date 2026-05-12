@@ -46,6 +46,9 @@ function applyRandomAnimation() {
     quoteContainer.classList.remove(animClass);
   });
   
+  // Trigger reflow to restart animation
+  void quoteContainer.offsetHeight;
+  
   // Select a random animation class
   const randomIndex = Math.floor(Math.random() * animationClasses.length);
   const randomAnimation = animationClasses[randomIndex];
@@ -67,8 +70,13 @@ function complete() {
 
 // Get custom quotes from localStorage
 function getCustomQuotes() {
-  const quotes = localStorage.getItem('customQuotes');
-  return quotes ? JSON.parse(quotes) : [];
+  try {
+    const quotes = localStorage.getItem('customQuotes');
+    return quotes ? JSON.parse(quotes) : [];
+  } catch (error) {
+    console.error('Error reading custom quotes from localStorage:', error);
+    return [];
+  }
 }
 
 // Get Quotes From API
@@ -167,13 +175,25 @@ function newQuote() {
 
 // Get favorites from localStorage
 function getFavorites() {
-  const favorites = localStorage.getItem('favorites');
-  return favorites ? JSON.parse(favorites) : [];
+  try {
+    const favorites = localStorage.getItem('favorites');
+    return favorites ? JSON.parse(favorites) : [];
+  } catch (error) {
+    console.error('Error reading favorites from localStorage:', error);
+    return [];
+  }
 }
 
 // Save favorites to localStorage
 function saveFavorites(favorites) {
-  localStorage.setItem('favorites', JSON.stringify(favorites));
+  try {
+    localStorage.setItem('favorites', JSON.stringify(favorites));
+  } catch (error) {
+    console.error('Error saving favorites to localStorage:', error);
+    if (error.name === 'QuotaExceededError') {
+      alert('Storage quota exceeded. Please remove some favorites.');
+    }
+  }
 }
 
 // Toggle favorite status
@@ -212,7 +232,7 @@ function toggleFavorite() {
 
 // Share Quote on X (formerly Twitter)
 function shareOnX() {
-  const xUrl = `https://twitter.com/intent/tweet?text=${quoteText.textContent} - ${authorText.textContent}`; // URL still uses twitter.com
+  const xUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(quoteText.textContent)} - ${encodeURIComponent(authorText.textContent)}`; // URL still uses twitter.com
   window.open(xUrl, '_blank');
 }
 

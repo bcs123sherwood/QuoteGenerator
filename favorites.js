@@ -3,13 +3,25 @@ const noFavoritesMessage = document.getElementById('no-favorites');
 
 // Get favorites from localStorage
 function getFavorites() {
-  const favorites = localStorage.getItem('favorites');
-  return favorites ? JSON.parse(favorites) : [];
+  try {
+    const favorites = localStorage.getItem('favorites');
+    return favorites ? JSON.parse(favorites) : [];
+  } catch (error) {
+    console.error('Error reading favorites from localStorage:', error);
+    return [];
+  }
 }
 
 // Save favorites to localStorage
 function saveFavorites(favorites) {
-  localStorage.setItem('favorites', JSON.stringify(favorites));
+  try {
+    localStorage.setItem('favorites', JSON.stringify(favorites));
+  } catch (error) {
+    console.error('Error saving favorites to localStorage:', error);
+    if (error.name === 'QuotaExceededError') {
+      alert('Storage quota exceeded. Please remove some favorites.');
+    }
+  }
 }
 
 // Remove a favorite quote
@@ -23,7 +35,7 @@ function removeFavorite(event) {
   
   // Filter out the quote to remove
   const updatedFavorites = favorites.filter(favorite => 
-    favorite.text !== quoteText || favorite.author !== authorText
+    favorite.text !== quoteText && favorite.author !== authorText
   );
   
   // Save updated favorites
@@ -52,13 +64,18 @@ function createFavoriteCard(favorite) {
   // Create remove button
   const removeButton = document.createElement('button');
   removeButton.classList.add('remove-favorite');
+  removeButton.setAttribute('aria-label', `Remove "${favorite.author}" from favorites`);
   removeButton.innerHTML = '<i class="fas fa-times"></i>';
   removeButton.addEventListener('click', removeFavorite);
   
   // Create quote text
   const quoteElement = document.createElement('p');
   quoteElement.classList.add('favorite-quote');
-  quoteElement.innerHTML = `<i class="fas fa-quote-left favorite-icon"></i>${favorite.text}`;
+  const quoteIcon = document.createElement('i');
+  quoteIcon.className = 'fas fa-quote-left favorite-icon';
+  const quoteTextNode = document.createTextNode(favorite.text);
+  quoteElement.appendChild(quoteIcon);
+  quoteElement.appendChild(quoteTextNode);
   
   // Create author text
   const authorElement = document.createElement('p');
@@ -92,12 +109,13 @@ function displayFavorites() {
   favorites.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
   
   // Create and append favorite cards
-  favorites.forEach(favorite => {
+  favorites.forEach((favorite, index) => {
     const card = createFavoriteCard(favorite);
-    // Add a small delay for staggered animation
+    // Add a small delay for staggered animation (max 800ms)
+    const delay = Math.min(index * 100, 800);
     setTimeout(() => {
       favoritesContainer.appendChild(card);
-    }, favoritesContainer.children.length * 100);
+    }, delay);
   });
 }
 
