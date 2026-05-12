@@ -33,11 +33,11 @@ body {
 }
 
 .left-nav:nth-of-type(2) {
-  left: 160px;
+  left: 180px;
 }
 
 .left-nav:nth-of-type(3) {
-  left: 300px;
+  left: 360px;
 }
 
 .nav-button {
